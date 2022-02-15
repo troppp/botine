@@ -80,6 +80,8 @@ client.on("message", async (msg) => {
       msg.content.toLowerCase().startsWith(prefix + "it")
     ) {
       inspectTontine(msg);
+    } else if (msg.content.toLowerCase() === prefix + "lasterr") {
+      msg.channel.send(lasterr)
     }
   }
 });
@@ -197,8 +199,13 @@ async function inspectTontine(msg, embedType) {
 }
 
 async function sendUserEmbed(msg, embedArray) {
+  var el = embedArray.length; // yktv
+  var ce = 0; // current embed array index
+  var rta = el - 1; // turn around point to cycle back to 0 (right side)
+
   let sentMsg;
   let row;
+  let orgFooter = []
 
   if (embedArray.length > 1) {
     row = new MessageActionRow().addComponents(
@@ -212,6 +219,11 @@ async function sendUserEmbed(msg, embedArray) {
         .setLabel("➡️")
         .setStyle("PRIMARY")
     );
+
+    for (let i = 1; i <= embedArray.length; i++) {
+      orgFooter.push(embedArray[i - 1].footer.text)
+      embedArray[i - 1].footer.text = (`(${i.toString()}/${embedArray.length.toString()}) ` + embedArray[i - 1].footer.text.toString())
+    }
 
     sentMsg = await msg.channel.send({
       embeds: [embedArray[0]],
@@ -229,10 +241,6 @@ async function sendUserEmbed(msg, embedArray) {
     filter,
     time: 1000 * 120,
   });
-
-  var el = embedArray.length; // yktv
-  var ce = 0; // current embed array index
-  var rta = el - 1; // turn around point to cycle back to 0 (right side)
 
   collector.on("collect", (i = Discord.Interaction) => {
     if (i.customId === "right") {
@@ -252,6 +260,7 @@ async function sendUserEmbed(msg, embedArray) {
         i.update({ embeds: [embedArray[ce]], components: [row] });
       }
     } else if (i.customId === "stop") {
+      embedArray[ce].footer.text = orgFooter[ce]
       i.update({ embeds: [embedArray[ce]], components: [] });
     }
   });

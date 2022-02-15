@@ -1,6 +1,6 @@
 {
   "name": "botine",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "tontine stat discord bot",
   "main": "index.js",
   "scripts": {
