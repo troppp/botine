@@ -203,9 +203,9 @@ async function sendUserEmbed(msg, embedArray) {
   var ce = 0; // current embed array index
   var rta = el - 1; // turn around point to cycle back to 0 (right side)
 
-  let sentMsg;
-  let row;
-  let orgFooter = []
+  var sentMsg;
+  var row;
+  var orgFooter = []
 
   if (embedArray.length > 1) {
     row = new MessageActionRow().addComponents(
@@ -262,6 +262,7 @@ async function sendUserEmbed(msg, embedArray) {
     } else if (i.customId === "stop") {
       embedArray[ce].footer.text = orgFooter[ce]
       i.update({ embeds: [embedArray[ce]], components: [] });
+      collector.stop()
     }
   });
 
