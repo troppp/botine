@@ -122,6 +122,7 @@ async function inspectTontine(msg, embedType) {
         var ts = parseInt(tontineUser[5]);
         var tsDateOrg = new Date(ts);
         tsDate = utcToZonedTime(tsDateOrg, "America/New_York");
+        var alive = moment(lastPressed).isAfter((+new Date - 172800000), 'day')
 
         var offsetC;
         var embedColor;
@@ -148,45 +149,70 @@ async function inspectTontine(msg, embedType) {
           embedColor = "#24bd3e";
         }
         var imageName = `avatar-${offsetC + accountType * 7}.png`;
+        var graveName = `grave-${graveType}.png`
         var imageLink = `https://github.com/WetWipee/tontine/blob/577e698a435d84bd92a5bbc2e18b6a5368ee2769/tontine-sprites-resize/${imageName}?raw=true`;
+        var graveLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${graveName}?raw=true`;
 
         var userInspectionEmbed = new MessageEmbed()
           .setColor(embedColor)
           .setTitle("Tontine User Inspection: ")
-          .setThumbnail(imageLink)
-          .setFooter(`last data update • ${moment(tsDateOrg).fromNow()}`);
+          if (alive == true) { 
+            userInspectionEmbed
+            .setThumbnail(imageLink) 
+            .setFooter({ text: `last data update • ${moment(tsDateOrg).fromNow()}`, iconURL: graveLink })
+          } else { 
+            userInspectionEmbed
+            .setThumbnail(graveLink)
+            .setFooter({ text: `last data update • ${moment(tsDateOrg).fromNow()}`, iconURL: imageLink })
+          }
 
         if (lastPressed != 0) {
           if (embedType === "dev") {
             userInspectionEmbed
               .setDescription(
-                `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**`
+                `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**`
               )
-              .setFooter(`last data update • ${tsDate.toLocaleString()}`);
+              if (alive == true) { 
+                userInspectionEmbed
+                .setThumbnail(imageLink) 
+                .setFooter({ text: `last data update • ${tsDate.toLocaleString()}`, iconURL: graveLink })
+              } else { 
+                userInspectionEmbed
+                .setThumbnail(graveLink)
+                .setFooter({ text: `last data update • ${tsDate.toLocaleString()}`, iconURL: imageLink })
+              }
           } else if (embedType === "timestamp") {
             var lastPressedseconds = Math.round(lastPressed / 1000);
             userInspectionEmbed.setDescription(
-              `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**`
+              `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**\nalive: **${alive}**`
             );
           } else {
             userInspectionEmbed.setDescription(
-              `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**`
+              `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**`
             );
           }
         } else {
           if (embedType === "dev") {
             userInspectionEmbed
               .setDescription(
-                `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **never**`
+                `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **never**\nalive?: **${alive}**`
               )
-              .setFooter(`last data update • ${tsDate.toLocaleString()}`);
+              if (alive == true) { 
+                userInspectionEmbed
+                .setThumbnail(imageLink) 
+                .setFooter({ text: `last data update • ${tsDate.toLocaleString()}`, iconURL: graveLink })
+              } else { 
+                userInspectionEmbed
+                .setThumbnail(graveLink)
+                .setFooter({ text: `last data update • ${tsDate.toLocaleString()}`, iconURL: imageLink })
+              }
           } else if (embedType === "timestamp") {
             userInspectionEmbed.setDescription(
-              `name: **${name}**\nlast press: **never**`
+              `name: **${name}**\nlast press: **never**\nalive: **${alive}**`
             );
           } else {
             userInspectionEmbed.setDescription(
-              `name: **${name}**\nlast press: **never**`
+              `name: **${name}**\nlast press: **never**\nalive: **${alive}**`
             );
           }
         }
@@ -261,8 +287,7 @@ async function sendUserEmbed(msg, embedArray) {
       }
     } else if (i.customId === "stop") {
       embedArray[ce].footer.text = orgFooter[ce]
-      i.update({ embeds: [embedArray[ce]], components: [] });
-      collector.stop()
+      i.update({ embeds: [embedArray[ce]], components: [] }).then((_) => collector.stop())
     }
   });
 
