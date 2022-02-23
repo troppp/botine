@@ -8,16 +8,24 @@ const { utcToZonedTime } = require("date-fns-tz");
 const axios = require("axios");
 const moment = require("moment");
 
-exports.run = (client, msg, args, extraArgs) => {
-    inspectTontine(msg, extraArgs)
+exports.run = (client, args, extraArgs, msg, slashcommand, interaction) => {
+    inspectTontine(msg, extraArgs, slashcommand, interaction)
 }
 
 exports.name = "inspecttontine";
 
-async function inspectTontine(msg, embedType) {
-    var args = msg.content.split(" ");
+async function inspectTontine(msg, embedType, slashcommand, interaction) {
+
+  var args;
+
+  if (slashcommand == 'false') {
+    args = msg.content.split(" ");
     args.shift();
     args[0] = args.join(" ");
+  } else {
+    args = interaction.options.get('account').value.split(" ");
+    args[0] = args.join(" ")
+  }
 
     tontineUser = [];
   
@@ -37,7 +45,11 @@ async function inspectTontine(msg, embedType) {
       }
   
       if (tontineUser.length == 0) {
-        msg.reply("That user doesn't exist! Please send a valid user.");
+        if (slashcommand == 'true') {
+          interaction.reply( { content: "That user doesn't exist! Please send a valid user.", ephemeral: true });
+        } else {
+          msg.reply("That user doesn't exist! Please send a valid user.");
+        }
       } else {
         tontineUser.forEach(function (tontineUser) {
           var name = tontineUser[0];
@@ -54,28 +66,8 @@ async function inspectTontine(msg, embedType) {
   
           var offsetC;
           var embedColor;
-          if (color == "aqua") {
-            offsetC = 0;
-            embedColor = "#48e1f1";
-          } else if (color == "purple") {
-            offsetC = 1;
-            embedColor = "#5638f5";
-          } else if (color == "pink") {
-            offsetC = 2;
-            embedColor = "#a72ce9";
-          } else if (color == "red") {
-            offsetC = 3;
-            embedColor = "#d90101";
-          } else if (color == "orange") {
-            offsetC = 4;
-            embedColor = "#f17001";
-          } else if (color == "yellow") {
-            offsetC = 5;
-            embedColor = "#ffef01";
-          } else if (color == "green") {
-            offsetC = 6;
-            embedColor = "#24bd3e";
-          }
+          "aqua"==color?(offsetC=0,embedColor="#48e1f1"):"purple"==color?(offsetC=1,embedColor="#5638f5"):"pink"==color?(offsetC=2,embedColor="#a72ce9"):"red"==color?(offsetC=3,embedColor="#d90101"):"orange"==color?(offsetC=4,embedColor="#f17001"):"yellow"==color?(offsetC=5,embedColor="#ffef01"):"green"==color&&(offsetC=6,embedColor="#24bd3e");
+          
           var imageName = `avatar-${offsetC + accountType * 7}.png`;
           var graveName = `grave-${graveType}.png`
           var imageLink = `https://github.com/WetWipee/tontine/blob/577e698a435d84bd92a5bbc2e18b6a5368ee2769/tontine-sprites-resize/${imageName}?raw=true`;
@@ -147,12 +139,13 @@ async function inspectTontine(msg, embedType) {
   
           embedArray.push(userInspectionEmbed);
         });
-        sendUserEmbed(msg, embedArray);
+        sendUserEmbed(msg, embedArray, slashcommand, interaction);
       }
     }
   }
   
-  async function sendUserEmbed(msg, embedArray) {
+  async function sendUserEmbed(msg, embedArray, slashcommand, interaction) {
+    let filter;
     var el = embedArray.length; // yktv
     var ce = 0; // current embed array index
     var rta = el - 1; // turn around point to cycle back to 0 (right side)
@@ -179,43 +172,49 @@ async function inspectTontine(msg, embedType) {
         embedArray[i - 1].footer.text = (`(${i.toString()}/${embedArray.length.toString()}) ` + embedArray[i - 1].footer.text.toString())
       }
   
-      sentMsg = await msg.channel.send({
-        embeds: [embedArray[0]],
-        components: [row],
-      });
-    } else {
-      sentMsg = await msg.channel.send({ embeds: embedArray });
+      if (slashcommand == 'true') {
+        var firstinteractionuserid = interaction.user.id
+        filter = (interaction) => interaction.user.id === firstinteractionuserid;
+        sentMsg = await interaction.reply({ embeds: [embedArray[0]], components: [row], fetchReply: true });
+      } else {
+        filter = (interaction) => interaction.user.id === msg.author.id;
+        sentMsg = await msg.channel.send({ embeds: [embedArray[0]], components: [row], });
     }
-  
-
-    const filter = (interaction) => interaction.user.id === msg.author.id;
-  
-    const collector = sentMsg.createMessageComponentCollector({ filter, time: 1000 * 120, });
-  
-    collector.on("collect", (i = Discord.Interaction) => {
-      if (i.customId === "right") {
-        if (ce != rta) {
-          ce += 1;
-          i.update({ embeds: [embedArray[ce]], components: [row] });
-        } else {
-          ce = 0;
-          i.update({ embeds: [embedArray[ce]], components: [row] });
-        }
-      } else if (i.customId === "left") {
-        if (ce != 0) {
-          ce -= 1;
-          i.update({ embeds: [embedArray[ce]], components: [row] });
-        } else {
-          ce = rta;
-          i.update({ embeds: [embedArray[ce]], components: [row] });
-        }
-      } else if (i.customId === "stop") {
-        embedArray[ce].footer.text = orgFooter[ce]
-        i.update({ embeds: [embedArray[ce]], components: [] }).then((_) => collector.stop())
+      } else {
+          if (slashcommand == 'true') {
+            sentMsg = await interaction.reply({ embeds: embedArray, fetchReply: true })
+          } else {
+            sentMsg = await msg.channel.send({ embeds: embedArray });
+          }
       }
-    });
-  
-    collector.on("end", () => {
-      sentMsg.edit({ components: [] });
-    });
+
+      const collector = sentMsg.createMessageComponentCollector({ filter, time: 1000 * 120, });
+
+      collector.on("collect", (i = Discord.Interaction) => {
+        if (i.customId === "right") {
+          if (ce != rta) {
+            ce += 1;
+            i.update({ embeds: [embedArray[ce]], components: [row] });
+          } else {
+            ce = 0;
+            i.update({ embeds: [embedArray[ce]], components: [row] });
+          }
+        } else if (i.customId === "left") {
+          if (ce != 0) {
+            ce -= 1;
+            i.update({ embeds: [embedArray[ce]], components: [row] });
+          } else {
+            ce = rta;
+            i.update({ embeds: [embedArray[ce]], components: [row] });
+          }
+        } else if (i.customId === "stop") {
+          embedArray[ce].footer.text = orgFooter[ce]
+          i.update({ embeds: [embedArray[ce]], components: [] }).then((_) => collector.stop())
+        }
+      });
+    
+      collector.on("end", () => {
+        sentMsg.edit({ components: [] });
+      });
+
   }

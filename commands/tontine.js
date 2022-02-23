@@ -1,12 +1,12 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 
-exports.run = (client, msg) => {
-    TontineData(msg)
+exports.run = (client, args, extraArgs, msg, slashcommand, interaction) => {
+    TontineData(client, args, extraArgs, msg, slashcommand, interaction)
 }
 exports.name = "tontine";
 
-function TontineData(msg) {
+function TontineData(client, args, extraArgs, msg, slashcommand, interaction) {
     async function makeGetRequest() {
       let res = await axios.get(
         "https://tontine-stats.s3.us-east-1.amazonaws.com/stats.json"
@@ -37,7 +37,12 @@ function TontineData(msg) {
           "```"
         )
         .setTimestamp(Date());
-        msg.channel.send({ embeds: [tontineDataEmbed] });
+        
+        if (slashcommand == 'true') {
+          interaction.reply({ embeds: [tontineDataEmbed], ephemeral: true });
+        } else {
+          msg.channel.send({ embeds: [tontineDataEmbed] });
+        }
     }
     makeGetRequest();
 }

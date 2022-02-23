@@ -18,5 +18,5 @@ module.exports = (client, msg) => {
   
     const cmd = client.commands.get(command);
     if (!cmd) return;
-    cmd.run(client, msg, args, extraArgs);
+    cmd.run(client, args, extraArgs, msg, 'false');
   };

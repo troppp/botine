@@ -3,7 +3,7 @@ const config = JSON.parse(fs.readFileSync('./config.json'))
 const { MessageEmbed } = require("discord.js");
 const prefix = config.prefix;
 
-exports.run = (client, msg) => {
+exports.run = (client, args, extraArgs, msg, slashcommand, interaction) => {
     const normalHelpEmbed = new MessageEmbed().setColor("#48e1f1").addFields(
         {
           name: `tontine bot help menu`,
@@ -15,7 +15,12 @@ exports.run = (client, msg) => {
           value: `${prefix}inspecttontine -> ${prefix}it\n${prefix}inspecttonetinetimestamp -> ${prefix}itt\n${prefix}inspecttontinedev -> ${prefix}itd`,
         }
       );
-      msg.channel.send({ embeds: [normalHelpEmbed] });
+
+      if (slashcommand == 'true') {
+        interaction.reply({ embeds: [normalHelpEmbed], ephemeral: true });
+      } else {
+        msg.channel.send({ embeds: [normalHelpEmbed] });
+      }
 }
 
 exports.name = "help";

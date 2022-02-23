@@ -4,63 +4,8 @@ require("dotenv").config();
 const config = JSON.parse(fs.readFileSync('./config.json'))
 
 const Discord = require("discord.js");
-const {
-  Client,
-  Intents,
-  permissions,
-  kick,
-  MessageEmbed,
-  MessageAttachment,
-  MessageActionRow,
-  MessageButton,
-} = require("discord.js");
-const client = new Client({
-  intents: ["GUILDS", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGES"],
-});
-const { zonedTimeToUtc, utcToZonedTime, format } = require("date-fns-tz");
-const axios = require("axios");
-
-const prefix = config.prefix
-const moment = require("moment");
-const { maxHeaderSize } = require("http");
-
-client.on("ready", () => {
-  client.user.setActivity(`${prefix}help    ;)`);
-  // console.log("Bot is ready");
-  let clientguilds = client.guilds.cache;
-  console.log("\nserverlist:" + clientguilds.map((g) => ` ${g.name}`) || "None");
-  console.log(`                            
-                    ....          ....            
-                    :xkx,        .okkl.           
-                 ...:ooo'        .cooc'...        
-               .:xxd,                .lxxo.       
-                :ddo,................'lddl.       
-                 ...:ddddddddddddddddl'..         
-                    ;xxxkkkOOkxxxxkOOo.           
-                     ...cxkOkl...;xOOo.           
-                       .:xkOkc.  'okkl.           
-                    ,lloxkkOOxoll:'...            
-                    :kkkkkkkkkkkkc.               
-                    .....'''''''',cllllll:.       
-                                 'dOOOOOOd'       
-           .,cc;.       .::ccccccokOOd:,',:cc:.   
-           .oOOd'       ;xkOOOOOOOOOOo.  .lOOx,   
-       .,:::;,,,;::;.   ;xkOOOOOOOOOOo.  .lOOx,   
-       .dOOo.  .lOOx,   ;xkOOOOOOOOOOo.  .lOOx,   
-       .dOOo.   .;;,.   ;xkOOOOOOOOOOo.   .;;,.   
-       .dOOo.           ;xkOOOOOOOOOOo.           
-       .,:::;,,'        .;;::okOOdc:::;,,'.       
-           .oOOd.            ,xOOl.  .oOOd.       
-        .'',:cc;.       ..''';:cc,   .oOOd.       
-       .dOko.           ;xkOk:       .oOOd.       
-       .dOOo.           ;xkOk:       .oOOd.       
-
-       "data is a powerful weapon in a silent war"
-            - trop
-            
-logged in as: ${client.user.username}#${client.user.discriminator} with prefix ${prefix}
-  `)
-});
+const { Client } = require("discord.js");
+const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGES"] });
 
 process.on("unhandledRejection", (error) => {
   console.log(error);
