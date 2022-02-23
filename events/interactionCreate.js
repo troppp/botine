@@ -1,4 +1,4 @@
-const axios = require('axios')
+const fs = require('fs')
 
 let msg = ''
 let args = ''
@@ -6,25 +6,16 @@ let extraArgs = ''
 
 async function getData(ct) {
     let taarray = []
-    let taarrayFinal = []
     if (ct != '') {
-        var res = await axios.get("http://localhost:8578");
-        var tplfData = res.data.toString().split("#NLN#");
-        tplfData.forEach(function (account) {
-                var tplfUser = account.split("#S#")[0].toString().toLowerCase();
-                if (tplfUser.startsWith(ct)) {
-                    taarray.push(tplfUser);
+        var names = (fs.readFileSync('sources/tontine-accounts.txt').toString())
+        names = names.split('\n')
+        names.forEach(function (usern) {
+                if (usern.startsWith(ct)) {
+                    taarray.push({ name: usern, value: usern });
                 }
             })
     }
-
-    taarray = [...new Set(taarray)].sort()
-
-    taarray.forEach(function (user) {
-        taarrayFinal.push({ name: user, value: user });
-    })
-
-    return taarrayFinal.slice(0,25)
+    return taarray.slice(0,25)
 }
 
 module.exports = async (client, interaction) => {

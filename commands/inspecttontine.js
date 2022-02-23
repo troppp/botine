@@ -34,12 +34,12 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
     } else {
       var res = await axios.get("http://localhost:8578");
       var tplfData = res.data.toString().split("#NLN#");
-  
+
       var tontineUser;
       var embedArray = [];
       for (let i = 0; i < tplfData.length; i++) {
-        var tplfUser = tplfData[i].split("#S#")[0].toString();
-        if (args[0].toLowerCase() === tplfUser.toLowerCase()) {
+        var tplfUser = tplfData[i].split("#S#")[0].toString()
+        if (args[0].toLowerCase().trim() === tplfUser.toLowerCase().trim()) {
           tontineUser.push(tplfData[i].split("#S#"));
         }
       }
