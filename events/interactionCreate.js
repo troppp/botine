@@ -28,10 +28,11 @@ module.exports = async (client, interaction) => {
         if (commandName === 'ping') {
             cmd.run(client, args, extraArgs, msg, 'true', interaction);
         } else if (commandName === 'inspecttontine') {
+            let extraArgs2 = ''
             if (interaction.options.get('type')) {
-                extraArgs = interaction.options.get('type').value
+                extraArgs2 = interaction.options.get('type').value
             }
-            cmd.run(client, args, extraArgs, msg, 'true', interaction);
+            cmd.run(client, args, extraArgs2, msg, 'true', interaction);
         } else if (commandName === 'help') {
             cmd.run(client, args, extraArgs, msg, 'true', interaction)
         } else if (commandName === 'tontine') {
