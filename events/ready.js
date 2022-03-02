@@ -2,13 +2,21 @@ const fs = require("fs");
 const config = JSON.parse(fs.readFileSync('./config.json'))
 const prefix = config.prefix;
 const { SlashCommandBuilder, SlashCommandStringOption } = require('@discordjs/builders')
-const { REST } = require('@discordjs/rest')
+const activity = `${prefix}help    ;)`
 
 module.exports = async (client) => {
-  client.user.setActivity(`${prefix}help    ;)`);
+  function refreshActivity() {
+    client.user.setActivity(activity, { type: "COMPETING" });
+  }
+  refreshActivity(client)
+  setInterval(refreshActivity, 3600000)
+
+  console.log(`
+set activity to: ${activity}`)
+
   // console.log("Bot is ready");
   let clientguilds = client.guilds.cache;
-  console.log("\nserverlist:" + clientguilds.map((g) => ` ${g.name}`) || "None");
+  console.log("serverlist:" + clientguilds.map((g) => ` ${g.name}`) || "None");
   console.log(`                            
                     ....          ....            
                     :xkx,        .okkl.           
@@ -44,7 +52,7 @@ logged in as: ${client.user.username}#${client.user.discriminator} with prefix $
   const testID = '906774586987794483'
   const testGuild = client.guilds.cache.get(testID)
   /* let slashcommands;
-  if (testGuild) { slashcommands = testGuild.commands } else { slashcommands = client.application?.commands }  */
+  if (testGuild) { slashcommands = testGuild.commands } else { slashcommands = client.application?.commands } */
   let slashcommands = client.application?.commands
 
   const pingslash = new SlashCommandBuilder()
