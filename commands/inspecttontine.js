@@ -7,6 +7,8 @@ const {
 const { utcToZonedTime } = require("date-fns-tz");
 const axios = require("axios");
 const moment = require("moment");
+require('moment-timezone');
+moment.tz.setDefault("America/New_York");
 
 exports.run = (client, args, extraArgs, msg, slashcommand, interaction) => {
     inspectTontine(msg, extraArgs, slashcommand, interaction)
@@ -62,7 +64,14 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           var ts = parseInt(tontineUser[5]);
           var tsDateOrg = new Date(ts);
           tsDate = utcToZonedTime(tsDateOrg, "America/New_York");
-          var alive = moment(lastPressed).isAfter((+new Date - 172800000), 'day')
+
+          let yesterday = moment((Date.now() - 86400000)).date()
+          let today = moment().date()
+          console.log(today + " " + yesterday)
+          var alive = false
+          if (moment(lastPressed).date() == yesterday || moment(lastPressed).date() == today) {
+            alive = true
+          }
   
           var offsetC;
           var embedColor;
