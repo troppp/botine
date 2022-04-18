@@ -79,8 +79,8 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           
           var imageName = `avatar-${offsetC + accountType * 7}.png`;
           var graveName = `grave-${graveType}.png`
-          var imageLink = `https://github.com/WetWipee/tontine/blob/577e698a435d84bd92a5bbc2e18b6a5368ee2769/tontine-sprites-resize/${imageName}?raw=true`;
-          var graveLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${graveName}?raw=true`;
+          var imageLink = `https://trop.pw/files/tontine-sprites/${imageName}`;
+          var graveLink = `https://trop.pw/files/tontine-sprites/${graveName}`;
   
           var userInspectionEmbed = new MessageEmbed()
             .setColor(embedColor)
