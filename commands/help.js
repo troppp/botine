@@ -12,7 +12,7 @@ exports.run = (client, args, extraArgs, msg, slashcommand, interaction) => {
         // { name: "\u200B", value: "\u200B" },
         {
           name: `shortcuts`,
-          value: `${prefix}inspecttontine -> ${prefix}it\n${prefix}inspecttonetinetimestamp -> ${prefix}itt\n${prefix}inspecttontinedev -> ${prefix}itd\n${prefix}inspecttontinelist -> ${prefix}itl`,
+          value: `${prefix}inspecttontine -> it\n${prefix}inspecttonetinetimestamp -> itt\n${prefix}inspecttontinedev -> itd\n${prefix}inspecttontinelist -> itl`,
         }
       );
 
