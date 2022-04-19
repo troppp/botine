@@ -65,12 +65,17 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           var tsDateOrg = new Date(ts);
           tsDate = utcToZonedTime(tsDateOrg, "America/New_York");
 
-          let yesterday = moment((Date.now() - 86400000)).date()
+          let yesterday = moment(Date.now() - 86400000).date()
+          let yMonth = moment(Date.now() - 86400000).month()
+          let yYear = moment(Date.now() - 86400000).year()
           let today = moment().date()
-          var alive = false
-          if (moment(lastPressed).date() == yesterday || moment(lastPressed).date() == today) {
-            alive = true
-          }
+          let month = moment().month()
+          let year = moment().year()
+          let alive = false
+          let lpMoment = moment(lastPressed)
+          if (lpMoment.date() == yesterday && lpMoment.month() == yMonth && lpMoment.year() == yYear
+          || lpMoment.date() == today && lpMoment.month() == month && lpMoment.year() == year) 
+            { alive = true }
   
           var offsetC;
           var embedColor;

@@ -33,21 +33,67 @@ async function getList(args) {
     let tplfData = res.data.toString().split("#NLN#");
     let tontineList = []
 
+    let yesterday = moment(Date.now() - 86400000).date()
+    let yMonth = moment(Date.now() - 86400000).month()
+    let yYear = moment(Date.now() - 86400000).year()
+    let today = moment().date()
+    let month = moment().month()
+    let year = moment().year()
+
     // alive list
-    if (args[0] == "alive") {
+    if (args[0] == "alive" || args[0] == "dead") {
         for (let i = 0; i < tplfData.length; i++) {
             let tplfUser = tplfData[i].split("#S#")
             let lastPressed = parseInt(tplfUser[4]);
+            let lpMoment = moment(lastPressed)
 
-            let yesterday = moment((Date.now() - 86400000)).date()
-            let today = moment().date()
             let alive = false
-            if (moment(lastPressed).date() == yesterday || moment(lastPressed).date() == today) { alive = true }
+            if (lpMoment.date() == yesterday && lpMoment.month() == yMonth && lpMoment.year() == yYear
+            || lpMoment.date() == today && lpMoment.month() == month && lpMoment.year() == year) 
+            { alive = true }
 
-            if (alive) {
-                tontineList.push(tplfUser[0].trim());
+            if (alive && args[0] == "alive") {
+              tontineList.push(tplfUser[0].trim());
+            } else if (!alive && args[0] == "dead") {
+              tontineList.push(tplfUser[0].trim());
             }
         } // end of for loop
+    } else if (args[0] == "unsafe") {
+        for (let i = 0; i < tplfData.length; i++) {
+            let tplfUser = tplfData[i].split("#S#")
+            let lastPressed = parseInt(tplfUser[4]);
+            let lpMoment = moment(lastPressed)
+
+            if (lpMoment.date() == yesterday && lpMoment.month() == yMonth && lpMoment.year() == yYear) {
+              tontineList.push(tplfUser[0].trim());
+            }
+        } // end of for loop
+    } else if (args[0] == "lastd") {
+      let yYesterday = moment(Date.now() - 172800000).date()
+      let yyMonth = moment(Date.now() - 172800000).month()
+      let yyYear = moment(Date.now() - 172800000).year()
+
+      for (let i = 0; i < tplfData.length; i++) {
+          let tplfUser = tplfData[i].split("#S#")
+          let lastPressed = parseInt(tplfUser[4]);
+          let lpMoment = moment(lastPressed)
+
+          if (lpMoment.date() == yYesterday && lpMoment.month() == yyMonth && lpMoment.year() == yyYear) {
+              tontineList.push(tplfUser[0].trim());
+            }
+      } // end of for loop
+    } else if (args[0] == "lasth") {
+      let hour = moment().hour()
+      let lHour = moment(Date.now() - 3600000).hour()
+      for (let i = 0; i < tplfData.length; i++) {
+        let tplfUser = tplfData[i].split("#S#")
+        let lastPressed = parseInt(tplfUser[4]);
+        let lpMoment = moment(lastPressed)
+
+        if ((lpMoment.hour() == hour || lpMoment.hour() == lHour) && lpMoment.date() == today && lpMoment.month() == month && lpMoment.year() == year) {
+            tontineList.push(tplfUser[0].trim());
+          }
+      } // end of for loop
     } else {
         for (let i = 0; i < tplfData.length; i++) {
             let tplfUser = tplfData[i].split("#S#")
@@ -55,7 +101,8 @@ async function getList(args) {
         } // end of for loop
     }
 
-    return [...new Set(tontineList)].sort()
+    //return [...new Set(tontineList)].sort()
+    return tontineList.sort()
 }
 
 function segmentList(tontineList, args) {
@@ -79,11 +126,17 @@ function segmentList(tontineList, args) {
             embedArray.push(listEmbed)
         })
     } else {
-        embedArray = new MessageEmbed()
+        let listConcatenated = '```'
+        tontineList.forEach(function (name) {
+            listConcatenated += `${name}\n`
+        })
+        listConcatenated += '```'
+
+        let listEmbed = new MessageEmbed()
             .setTitle("Tontine User List - " + args)
             .setColor("#583cf4")
-            .setDescription(list)
-            .setFooter({ text: "" })
+            .setDescription(listConcatenated)
+        embedArray.push(listEmbed)
     }
 
     return embedArray
