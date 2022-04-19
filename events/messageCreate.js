@@ -6,7 +6,11 @@ module.exports = (client, msg) => {
     let extraArgs;
 
     // tontine shortcuts ( WILL BE MOVED TO MODULE SOON^TM )
-    if (command.startsWith("it") || command.startsWith("inspecttontine")) {
+    // or not idk this works pretty well
+    if (command.startsWith("itl") || command.startsWith("inspecttontinelist")) {
+        oldcmd = command
+        command = "inspecttontinelist"
+    } else if (command.startsWith("it") || command.startsWith("inspecttontine")) {
         oldcmd = command
         command = "inspecttontine"
         if (oldcmd.slice(2) == "t" || oldcmd.slice(14) == "timestamp") {

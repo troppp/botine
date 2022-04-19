@@ -67,7 +67,6 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
 
           let yesterday = moment((Date.now() - 86400000)).date()
           let today = moment().date()
-          console.log(today + " " + yesterday)
           var alive = false
           if (moment(lastPressed).date() == yesterday || moment(lastPressed).date() == today) {
             alive = true
@@ -169,7 +168,10 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           .setCustomId("left")
           .setLabel("⬅️")
           .setStyle("PRIMARY"),
-        new MessageButton().setCustomId("stop").setLabel("🛑").setStyle("DANGER"),
+        new MessageButton()
+          .setCustomId("stop")
+          .setLabel("🛑")
+          .setStyle("DANGER"),
         new MessageButton()
           .setCustomId("right")
           .setLabel("➡️")
