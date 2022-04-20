@@ -94,6 +94,28 @@ async function getList(args) {
             tontineList.push(tplfUser[0].trim());
           }
       } // end of for loop
+    } else if (args[0] == "searchd") {
+        let sdate = args[2] - 1
+        let smonth = args[1] - 1
+        let syear = args[3]
+        if (syear.length == 2) {
+          syear = parseInt(`20${syear}`)
+        }
+        if (sdate == 27 && smonth == 11 && syear == 2021) {
+          sdate = 31
+          smonth = 11
+          syear = 1969
+        }
+
+        for (let i = 0; i < tplfData.length; i++) {
+          let tplfUser = tplfData[i].split("#S#")
+          let lastPressed = parseInt(tplfUser[4]);
+          let lpMoment = moment(lastPressed)
+
+          if (lpMoment.date() == sdate && lpMoment.month() == smonth && lpMoment.year() == syear && !(sdate == yesterday && syear == yYear && smonth == yMonth)) {
+              tontineList.push(tplfUser[0].trim());
+            }
+         } // end of for loop
     } else {
         for (let i = 0; i < tplfData.length; i++) {
             let tplfUser = tplfData[i].split("#S#")
@@ -125,7 +147,7 @@ function segmentList(tontineList, args) {
                 .setFooter({ text: "" })
             embedArray.push(listEmbed)
         })
-    } else {
+    } else if (tontineList.length > 0) {
         let listConcatenated = '```'
         tontineList.forEach(function (name) {
             listConcatenated += `${name}\n`
@@ -137,6 +159,12 @@ function segmentList(tontineList, args) {
             .setColor("#583cf4")
             .setDescription(listConcatenated)
         embedArray.push(listEmbed)
+    } else {
+        let listEmbed = new MessageEmbed()
+              .setTitle("Tontine User List - " + args)
+              .setColor("#583cf4")
+              .setDescription("```No results found.```")
+          embedArray.push(listEmbed)
     }
 
     return embedArray
