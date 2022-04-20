@@ -95,17 +95,10 @@ async function getList(args) {
           }
       } // end of for loop
     } else if (args[0] == "searchd") {
-        let sdate = args[2] - 1
-        let smonth = args[1] - 1
-        let syear = args[3]
-        if (syear.length == 2) {
-          syear = parseInt(`20${syear}`)
-        }
-        if (sdate == 27 && smonth == 11 && syear == 2021) {
-          sdate = 31
-          smonth = 11
-          syear = 1969
-        }
+        sDate = moment(((new Date(`${args[1]} ${args[2]} ${args[3]}`)).getTime()) - 86400000)
+        sdate = sDate.date()
+        smonth = sDate.month()
+        syear = sDate.year()
 
         for (let i = 0; i < tplfData.length; i++) {
           let tplfUser = tplfData[i].split("#S#")
