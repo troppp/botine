@@ -99,6 +99,11 @@ async function getList(args) {
         sdate = sDate.date()
         smonth = sDate.month()
         syear = sDate.year()
+        if (sdate == 27 && smonth == 11 && syear == 2021) {
+          sdate = 31
+          smonth = 11
+          syear = 1969
+        }
 
         for (let i = 0; i < tplfData.length; i++) {
           let tplfUser = tplfData[i].split("#S#")
