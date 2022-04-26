@@ -85,6 +85,9 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           var graveName = `grave-${graveType}.png`
           var imageLink = `https://trop.pw/files/tontine-sprites/${imageName}`;
           var graveLink = `https://trop.pw/files/tontine-sprites/${graveName}`;
+
+          var startDate = moment([2021, 11, 28])
+          var totalDays = lpMoment.diff(startDate, 'days') + 1
   
           var userInspectionEmbed = new MessageEmbed()
             .setColor(embedColor)
@@ -99,11 +102,13 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
               .setFooter({ text: `last data update • ${moment(tsDateOrg).fromNow()}`, iconURL: imageLink })
             }
   
+            // "days lived" by marc ig lOL not really he didnt do anyhting he nevr does anything LSOER LOL
+
           if (lastPressed != 0) {
             if (embedType === "dev" || embedType === "d") {
               userInspectionEmbed
                 .setDescription(
-                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**`
+                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\ndays lived: **${totalDays}**`
                 )
                 if (alive == true) { 
                   userInspectionEmbed
@@ -117,11 +122,11 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
             } else if (embedType === "timestamp" || embedType === "t") {
               var lastPressedseconds = Math.round(lastPressed / 1000);
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**\nalive: **${alive}**`
+                `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**\nalive: **${alive}**\ndays lived: **${totalDays}**`
               );
             } else {
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**`
+                `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\ndays lived: **${totalDays}**`
               );
             }
           } else {
