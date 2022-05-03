@@ -72,11 +72,12 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           let month = moment().month()
           let year = moment().year()
           let alive = false
+          let safe = false
           let lpMoment = moment(lastPressed)
-          if (lpMoment.date() == yesterday && lpMoment.month() == yMonth && lpMoment.year() == yYear
-          || lpMoment.date() == today && lpMoment.month() == month && lpMoment.year() == year) 
+          if (lpMoment.date() == yesterday && lpMoment.month() == yMonth && lpMoment.year() == yYear) 
             { alive = true }
-  
+          if (lpMoment.date() == today && lpMoment.month() == month && lpMoment.year() == year)
+            { alive = true; safe = true }
           var offsetC;
           var embedColor;
           "aqua"==color?(offsetC=0,embedColor="#48e1f1"):"purple"==color?(offsetC=1,embedColor="#5638f5"):"pink"==color?(offsetC=2,embedColor="#a72ce9"):"red"==color?(offsetC=3,embedColor="#d90101"):"orange"==color?(offsetC=4,embedColor="#f17001"):"yellow"==color?(offsetC=5,embedColor="#ffef01"):"green"==color&&(offsetC=6,embedColor="#24bd3e");
@@ -108,7 +109,7 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
             if (embedType === "dev" || embedType === "d") {
               userInspectionEmbed
                 .setDescription(
-                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\ndays lived: **${totalDays}**`
+                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**`
                 )
                 if (alive == true) { 
                   userInspectionEmbed
@@ -122,18 +123,18 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
             } else if (embedType === "timestamp" || embedType === "t") {
               var lastPressedseconds = Math.round(lastPressed / 1000);
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**\nalive: **${alive}**\ndays lived: **${totalDays}**`
+                `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**`
               );
             } else {
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\ndays lived: **${totalDays}**`
+                `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**`
               );
             }
           } else {
             if (embedType === "dev" || embedType === "d") {
               userInspectionEmbed
                 .setDescription(
-                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **never**\nalive?: **${alive}**`
+                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **never**`
                 )
                 if (alive == true) { 
                   userInspectionEmbed
