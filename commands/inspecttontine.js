@@ -84,8 +84,11 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           
           var imageName = `avatar-${offsetC + accountType * 7}.png`;
           var graveName = `grave-${graveType}.png`
-          var imageLink = `https://trop.pw/files/tontine-sprites/${imageName}`;
-          var graveLink = `https://trop.pw/files/tontine-sprites/${graveName}`;
+          //var imageLink = `https://trop.pw/files/tontine-sprites/${imageName}`;
+          //var graveLink = `https://trop.pw/files/tontine-sprites/${graveName}`;
+          // in case server is down ;(
+          var imageLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${imageName}`;
+          var graveLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${graveName}`;
 
           var startDate = moment([2021, 11, 28])
           var totalDays = lpMoment.diff(startDate, 'days') + 1
