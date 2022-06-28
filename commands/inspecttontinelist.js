@@ -19,7 +19,7 @@ exports.name = "inspecttontinelist";
 
 const listSize = 20;
 
-async function getList(args) {
+async function getList(msg, args) {
     /*
     tontine tplf #S# params
     0: name
@@ -122,6 +122,7 @@ async function getList(args) {
     }
 
     //return [...new Set(tontineList)].sort()
+    msg.reply(`${tontineList}\nthere that's the list before it's made and sorted into an embed`)
     return tontineList.sort()
 }
 
@@ -146,7 +147,7 @@ function segmentList(tontineList, args) {
             embedArray.push(listEmbed)
         })
     } else if (tontineList.length > 0) {
-        let listConcatenated = '```'
+        let listConcatenated = '```\n'
         tontineList.forEach(function (name) {
             listConcatenated += `${name}\n`
         })
@@ -164,7 +165,6 @@ function segmentList(tontineList, args) {
               .setDescription("```No results found.```")
           embedArray.push(listEmbed)
     }
-
     return embedArray
 }
 
@@ -246,7 +246,7 @@ async function sendEmbed(msg, embedArray, slashcommand, interaction) {
 }
 
 function constructList(msg, slashcommand, interaction, args){
-    getList(args).then((tontineList) =>
+    getList(msg, args).then((tontineList) =>
     segmentList(tontineList, args)).then((embedArray) => 
     sendEmbed(msg, embedArray, slashcommand, interaction))
 }

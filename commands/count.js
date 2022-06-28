@@ -19,6 +19,7 @@ exports.name = "count";
 
 async function getCount(msg, args) {
     let count = 0
+    let dmsg = ''
     /*
     tontine tplf #S# params
     0: name
@@ -53,11 +54,14 @@ async function getCount(msg, args) {
 
             if (alive && args[0] == "alive") {
               count += 1
+              dmsg = "are alive"
             } else if (!alive && args[0] == "dead") {
               count += 1
+              dmsg = "are dead"
             }
         } // end of for loop
     } else if (args[0] == "unsafe") {
+        dmsg = "are unsafe"
         for (let i = 0; i < tplfData.length; i++) {
             let tplfUser = tplfData[i].split("#S#")
             let lastPressed = parseInt(tplfUser[4]);
@@ -68,6 +72,7 @@ async function getCount(msg, args) {
             }
         } // end of for loop
     } else if (args[0] == "lastd") {
+      dmsg = "died today"
       let yYesterday = moment(Date.now() - 172800000).date()
       let yyMonth = moment(Date.now() - 172800000).month()
       let yyYear = moment(Date.now() - 172800000).year()
@@ -82,6 +87,7 @@ async function getCount(msg, args) {
             }
       } // end of for loop
     } else if (args[0] == "lasth") {
+    dmsg = "clicked in the last hour"
       let hour = moment().hour()
       let lHour = moment(Date.now() - 3600000).hour()
       for (let i = 0; i < tplfData.length; i++) {
@@ -94,6 +100,8 @@ async function getCount(msg, args) {
           }
       } // end of for loop
     } else if (args[0] == "searchd") {
+        dmsg = `died on ${moment(((new Date(`${args[1]} ${args[2]} ${args[3]}`)).getTime())).format('MMMM Do YYYY')}`
+
         sDate = moment(((new Date(`${args[1]} ${args[2]} ${args[3]}`)).getTime()) - 86400000)
         sdate = sDate.date()
         smonth = sDate.month()
@@ -121,5 +129,5 @@ async function getCount(msg, args) {
     }
 
     //return [...new Set(tontineList)].sort()
-    msg.reply(count.toString())
+    msg.reply(`${count.toString()} players ${dmsg}`)
 }
