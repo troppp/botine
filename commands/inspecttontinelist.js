@@ -122,7 +122,6 @@ async function getList(msg, args) {
     }
 
     //return [...new Set(tontineList)].sort()
-    msg.reply(`${tontineList}\nthere that's the list before it's made and sorted into an embed`)
     return tontineList.sort()
 }
 
