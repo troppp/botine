@@ -245,7 +245,11 @@ async function sendEmbed(msg, embedArray, slashcommand, interaction) {
 }
 
 function constructList(msg, slashcommand, interaction, args){
-    getList(msg, args).then((tontineList) =>
-    segmentList(tontineList, args)).then((embedArray) => 
-    sendEmbed(msg, embedArray, slashcommand, interaction))
+  if (slashcommand == 'true') {
+    args = interaction.options.get('type').value.split(" ");
+  }
+
+  getList(msg, args).then((tontineList) =>
+  segmentList(tontineList, args)).then((embedArray) => 
+  sendEmbed(msg, embedArray, slashcommand, interaction))
 }

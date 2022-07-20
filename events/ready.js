@@ -45,14 +45,28 @@ set activity to: ${activity}`)
 
        "data is a powerful weapon in a silent war"
             - trop
-            
+
 logged in as: ${client.user.username}#${client.user.discriminator} with prefix ${prefix}
   `)
 
+  // checks for json and if it isn't there it makes it or smth idfk.
+  try {
+    fs.readFileSync("./sources/it.json") 
+  } catch {
+    console.log("file doesn't exist ima make it for you lazy bitch")
+    fs.writeFile("./sources/it.json", `{"counts":{}}`, (err) => {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log("there made ur fucking file bitch\n")
+      }
+    })
+  }
+
   const testID = '906774586987794483'
   const testGuild = client.guilds.cache.get(testID)
-  /* let slashcommands;
-  if (testGuild) { slashcommands = testGuild.commands } else { slashcommands = client.application?.commands } */
+  // let slashcommands;
+  // if (testGuild) { slashcommands = testGuild.commands } else { slashcommands = client.application?.commands }
   let slashcommands = client.application?.commands
 
   const pingslash = new SlashCommandBuilder()
@@ -89,7 +103,28 @@ logged in as: ${client.user.username}#${client.user.discriminator} with prefix $
     .setDescription('sends embed with tontine data')
   slashcommands?.create(tontine)
 
+  /* const itlslash = new SlashCommandBuilder()
+    .setName('tontinelist')
+    .setDescription("sends list of whatever you choose")
+    .addStringOption(
+      new SlashCommandStringOption()
+            .setName('type')
+            .setDescription('what kind you want foo?')
+            .addChoice('alive', 'alive')
+            .addChoice('dead', 'dead')
+            .addChoice('unsafe', 'unsafe')
+            .addChoice('lasth', 'who clicked in the last hour')
+            .addChoice('lastd', 'who died today')
+            .addChoice('searchd', 'search by death date <month day year>')
+            .addChoice('all', 'list of all players')
+            .setRequired(true)
+    )
+  slashcommands?.create(itlslash) */
+
   testGuild.commands.fetch()
-  .then(commands => commands.forEach(commands => console.log(`Fetched ${commands.name} (${commands.description}) / command`)))
+  .then(commands => commands.forEach(function (commands) {
+      // commands.delete()
+      return console.log(`Fetched ${commands.name} (${commands.description}) / command`);
+    }))
   .catch(console.error);
 };

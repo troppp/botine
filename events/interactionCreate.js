@@ -10,10 +10,16 @@ async function getData(ct) {
         var names = (fs.readFileSync('sources/tontine-accounts.txt').toString())
         names = names.split('\n')
         names.forEach(function (usern) {
-                if (usern.startsWith(ct)) {
-                    taarray.push({ name: usern, value: usern });
-                }
-            })
+            if (usern.startsWith(ct)) {
+                taarray.push({ name: usern, value: usern });
+            }
+        })
+    } else {
+        var names = (fs.readFileSync('sources/tontine-accounts.txt').toString())
+        names = names.split('\n')
+        names.forEach(function (usern) {
+            taarray.push({ name: usern, value: usern });
+        })
     }
     return taarray.slice(0,25)
 }
@@ -27,6 +33,13 @@ module.exports = async (client, interaction) => {
 
         if (commandName === 'ping') {
             cmd.run(client, args, extraArgs, msg, 'true', interaction);
+        } else if (commandName === "tontinelist") {
+            console.log("test")
+            let extraArgs2 = ''
+            if (interaction.options.get('type')) {
+                extraArgs2 = interaction.options.get('type').value
+            }
+            cmd.run(client, args, extraArgs2, msg, 'true', interaction);
         } else if (commandName === 'inspecttontine') {
             let extraArgs2 = ''
             if (interaction.options.get('type')) {

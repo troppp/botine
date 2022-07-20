@@ -9,6 +9,8 @@ const axios = require("axios");
 const moment = require("moment");
 require('moment-timezone');
 moment.tz.setDefault("America/New_York");
+const fs = require("fs");
+const { ContextMenuCommandBuilder } = require("@discordjs/builders");
 
 exports.run = (client, args, extraArgs, msg, slashcommand, interaction) => {
     inspectTontine(msg, extraArgs, slashcommand, interaction)
@@ -16,9 +18,27 @@ exports.run = (client, args, extraArgs, msg, slashcommand, interaction) => {
 
 exports.name = "inspecttontine";
 
+async function loadEmbed(embedType) {
+  var loadEmbed = new MessageEmbed()
+    .setColor("#808080")
+    .setTitle("Tontine User Inspection: ")
+    .setFooter(`last data update • loading`)
+    
+    if (embedType === "dev" || embedType === "d") {
+      loadEmbed
+        .setDescription(`name: **loading**\ncolor: **loading**\navatar: **loading**\ngrave: **loading**\nlast press: **loading**\nalive: **loading**\nsafe: **loading**\ndays lived: **loading**\nchecked: **loading**`)
+    } else {
+      loadEmbed
+        .setDescription(`name: **loading**\nlast press: **loading**\nalive: **loading**\nsafe: **loading**\ndays lived: **loading**\nchecked: **loading**`);
+    }
+
+    return [loadEmbed]
+}
+
 async function inspectTontine(msg, embedType, slashcommand, interaction) {
 
   var args;
+  let sentMsg;
 
   if (slashcommand == 'false') {
     args = msg.content.split(" ");
@@ -30,10 +50,16 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
   }
 
     tontineUser = [];
-  
+
     if (!args[0]) {
       msg.reply("Please provide a user to inspect!");
     } else {
+      if (slashcommand == 'false') {
+        sentMsg = await msg.channel.send({ embeds: await loadEmbed(embedType) })
+      } else {
+        sentMsg = await interaction.reply({ embeds: await loadEmbed(embedType), fetchReply: true })
+      }
+
       var res = await axios.get("http://localhost:8578");
       var tplfData = res.data.toString().split("#NLN#");
 
@@ -46,14 +72,25 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
         }
       }
   
+      let countJSON = JSON.parse(await fs.readFileSync("./sources/it.json", (err) => {if (err) {console.log(err)}})).counts
+
       if (tontineUser.length == 0) {
+        let usernotreal = new MessageEmbed()
+          .setTitle("That user doesn't exist! Please send a valid user.")
+          .setColor("ff0000")
         if (slashcommand == 'true') {
-          interaction.reply( { content: "That user doesn't exist! Please send a valid user.", ephemeral: true });
+          sentMsg.edit( { embeds: [usernotreal] });
         } else {
-          msg.reply("That user doesn't exist! Please send a valid user.");
+          sentMsg.edit( { embeds: [usernotreal] } );
         }
       } else {
         tontineUser.forEach(function (tontineUser) {
+
+          // count
+          tontineUserNOTIME = tontineUser.slice(0,4)
+          countJSON[tontineUserNOTIME] = countJSON[tontineUserNOTIME] ? (countJSON[tontineUserNOTIME] + 1) : 1
+          let count = countJSON[tontineUserNOTIME]
+          
           var name = tontineUser[0];
           var color = tontineUser[1];
           var accountType = tontineUser[2];
@@ -112,7 +149,7 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
             if (embedType === "dev" || embedType === "d") {
               userInspectionEmbed
                 .setDescription(
-                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**`
+                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**\nchecked: **${count} times**`
                 )
                 if (alive == true) { 
                   userInspectionEmbed
@@ -126,18 +163,18 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
             } else if (embedType === "timestamp" || embedType === "t") {
               var lastPressedseconds = Math.round(lastPressed / 1000);
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**`
+                `name: **${name}**\nlast press: **<t:${lastPressedseconds.toString()}>**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**\nchecked: **${count} times**`
               );
             } else {
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**`
+                `name: **${name}**\nlast press: **${lastPressedDate.toLocaleString()}**\nalive: **${alive}**\nsafe: **${safe}**\ndays lived: **${totalDays}**\nchecked: **${count} times**`
               );
             }
           } else {
             if (embedType === "dev" || embedType === "d") {
               userInspectionEmbed
                 .setDescription(
-                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **never**`
+                  `name: **${name}**\ncolor: **${color}**\navatar: **${accountType}**\ngrave: **${graveType}**\nlast press: **never**\nalive: **${alive}**\nsafe: **${safe}**\nchecked: **${count} times**`
                 )
                 if (alive == true) { 
                   userInspectionEmbed
@@ -150,29 +187,33 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
                 }
             } else if (embedType === "timestamp" || embedType === "t") {
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **never**\nalive: **${alive}**`
+                `name: **${name}**\nlast press: **never**\nalive: **${alive}**\nsafe: **${safe}**\nchecked: **${count} times**`
               );
             } else {
               userInspectionEmbed.setDescription(
-                `name: **${name}**\nlast press: **never**\nalive: **${alive}**`
+                `name: **${name}**\nlast press: **never**\nalive: **${alive}**\nsafe: **${safe}**\nchecked: **${count} times**`
               );
             }
           }
   
           embedArray.push(userInspectionEmbed);
         });
-        sendUserEmbed(msg, embedArray, slashcommand, interaction);
+        sendUserEmbed(msg, embedArray, slashcommand, interaction, sentMsg);
+
+        // write to JSON file :100:
+        countJSONupdated = JSON.parse(await fs.readFileSync("./sources/it.json", (err) => {if (err) {console.log(err)}}))
+        countJSONupdated.counts = countJSON
+        fs.writeFileSync("./sources/it.json", JSON.stringify(countJSONupdated))
       }
     }
   }
   
-  async function sendUserEmbed(msg, embedArray, slashcommand, interaction) {
+  async function sendUserEmbed(msg, embedArray, slashcommand, interaction, sentMsg) {
     let filter;
     var el = embedArray.length; // yktv
     var ce = 0; // current embed array index
     var rta = el - 1; // turn around point to cycle back to 0 (right side)
   
-    var sentMsg;
     var row;
     var orgFooter = []
   
@@ -200,16 +241,16 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
       if (slashcommand == 'true') {
         var firstinteractionuserid = interaction.user.id
         filter = (interaction) => interaction.user.id === firstinteractionuserid;
-        sentMsg = await interaction.reply({ embeds: [embedArray[0]], components: [row], fetchReply: true });
+        sentMsg.edit({ embeds: [embedArray[0]], components: [row], fetchReply: true });
       } else {
         filter = (interaction) => interaction.user.id === msg.author.id;
-        sentMsg = await msg.channel.send({ embeds: [embedArray[0]], components: [row], });
+        sentMsg.edit({ embeds: [embedArray[0]], components: [row], });
     }
       } else {
           if (slashcommand == 'true') {
-            sentMsg = await interaction.reply({ embeds: embedArray, fetchReply: true })
+            sentMsg.edit({ embeds: embedArray })
           } else {
-            sentMsg = await msg.channel.send({ embeds: embedArray });
+            sentMsg.edit({ embeds: embedArray });
           }
       }
 
