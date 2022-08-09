@@ -31,7 +31,6 @@ async function getCount(msg, args) {
     */
     let res = await axios.get("http://localhost:8578");
     let tplfData = res.data.toString().split("#NLN#");
-    let tontineList = []
 
     let yesterday = moment(Date.now() - 86400000).date()
     let yMonth = moment(Date.now() - 86400000).month()

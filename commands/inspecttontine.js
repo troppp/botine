@@ -119,13 +119,21 @@ async function inspectTontine(msg, embedType, slashcommand, interaction) {
           var embedColor;
           "aqua"==color?(offsetC=0,embedColor="#48e1f1"):"purple"==color?(offsetC=1,embedColor="#5638f5"):"pink"==color?(offsetC=2,embedColor="#a72ce9"):"red"==color?(offsetC=3,embedColor="#d90101"):"orange"==color?(offsetC=4,embedColor="#f17001"):"yellow"==color?(offsetC=5,embedColor="#ffef01"):"green"==color&&(offsetC=6,embedColor="#24bd3e");
           
-          var imageName = `avatar-${offsetC + accountType * 7}.png`;
-          var graveName = `grave-${graveType}.png`
-          //var imageLink = `https://trop.pw/files/tontine-sprites/${imageName}`;
-          //var graveLink = `https://trop.pw/files/tontine-sprites/${graveName}`;
+          var imageName;
+          var graveName;
+          if (name == "bottlecaps") {
+            imageName = `avatar-${offsetC + accountType * 7}-bottlecaps.png`;
+            graveName = `grave-${graveType}-bottlecaps.png`
+          } else {
+            imageName = `avatar-${offsetC + accountType * 7}.png`;
+            graveName = `grave-${graveType}.png`
+          }
+         
+          var imageLink = `https://trop.pw/files/tontine-sprites/${imageName}`;
+          var graveLink = `https://trop.pw/files/tontine-sprites/${graveName}`;
           // in case server is down ;(
-          var imageLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${imageName}?raw=true`;
-          var graveLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${graveName}?raw=true`;
+          // var imageLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${imageName}?raw=true`;
+          // var graveLink = `https://github.com/WetWipee/tontine/blob/d0e80e6d4dc913fdae10d7de07862cac2d29491e/tontine-sprites-resize/${graveName}?raw=true`;
 
           var startDate = moment([2021, 11, 28])
           var totalDays = lpMoment.diff(startDate, 'days') + 1
